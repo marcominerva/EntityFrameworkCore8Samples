@@ -8,6 +8,8 @@ public partial class SampleDbContext : DbContext
 {
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<Landmark> Landmarks { get; set; }
+
     public SampleDbContext()
     {
     }
@@ -15,6 +17,16 @@ public partial class SampleDbContext : DbContext
     public SampleDbContext(DbContextOptions<SampleDbContext> options)
         : base(options)
     {
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // add-migration ComplexType -Context EntityFrameworkCore8Samples.Collections.SampleDbContext
+        modelBuilder.Entity<Landmark>(entity =>
+        {
+            entity.ComplexProperty(e => e.Position).IsRequired();    // La proprietà non può essere nullable
+        });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
