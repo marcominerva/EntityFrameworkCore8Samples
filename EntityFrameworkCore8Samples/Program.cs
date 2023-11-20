@@ -6,51 +6,57 @@ update-database -Context EntityFrameworkCore8Samples.Collections.SampleDbContext
 */
 
 using EntityFrameworkCore8Samples.Collections;
+using EntityFrameworkCore8Samples.Collections.Entities;
+using EntityFrameworkCore8Samples.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 
-//using var db = new MinimalDbContext();
+using var minimalDbContext = new MinimalDbContext();
 
-//var ids = new List<Guid>
-//{
-//    Guid.Parse("85c3d025-70f0-4e34-b7f5-24ea5dde79ec"),
-//    Guid.Parse("fc2546de-a286-429c-a483-298d8e14a666")
-//};
+// 1. "Contains" method is translated using parameters via OPENJSON.
+var ids = new List<Guid>
+{
+    Guid.Parse("85c3d025-70f0-4e34-b7f5-24ea5dde79ec"),
+    Guid.Parse("fc2546de-a286-429c-a483-298d8e14a666")
+};
 
-//var invoices = await db.Invoices.Where(i => ids.Contains(i.Id)).ToListAsync();
+var invoices = await minimalDbContext.Invoices.Where(i => ids.Contains(i.Id)).ToListAsync();
 
-//var city = "Taggia";
-//var people = await db.Database.SqlQuery<Person>($"""
-//    SELECT c.Id, FirstName + ' ' + LastName AS Name, c.Name AS CityName
-//    FROM People p
-//    INNER JOIN Cities c
-//    ON p.CityId = c.Id
-//    WHERE c.Name = {city}
-//    """)
-//    .OrderBy(p => p.Name).ToListAsync();
+// 2. Query for unmapped types.
+var city = "Taggia";
+var people = await minimalDbContext.Database.SqlQuery<Person>($"""
+    SELECT c.Id, FirstName + ' ' + LastName AS Name, c.Name AS CityName
+    FROM People p
+    INNER JOIN Cities c
+    ON p.CityId = c.Id
+    WHERE c.Name = {city}
+    """)
+    .OrderBy(p => p.Name).ToListAsync();
 
-using var db = new SampleDbContext();
+using var sampleDbContext = new SampleDbContext();
 
-//db.Products.Add(new Product
-//{
-//    Id = Guid.NewGuid(),
-//    Name = "Logitech K120",
-//    Tags = new List<string> { "hardware", "keyboard", "wired" }
-//});
+// 3. Support for collections of primitive types.
+sampleDbContext.Products.Add(new Product
+{
+    Id = Guid.NewGuid(),
+    Name = "Logitech K120",
+    Tags = ["hardware", "keyboard", "wired"]
+});
 
-//await db.SaveChangesAsync();
+await sampleDbContext.SaveChangesAsync();
 
-//var products = await db.Products.Where(p => p.Tags.Contains("hardware")).ToListAsync();
+var products = await sampleDbContext.Products.Where(p => p.Tags.Contains("hardware")).ToListAsync();
 
-//db.Landmarks.Add(new Landmark
-//{
-//    Id = Guid.NewGuid(),
-//    Name = "Bastione grosso",
-//    Position = new Position { Latitude = 43.85888, Longitude = 7.85194 }
-//});
+// 4. Complex types as value objects.
+sampleDbContext.Landmarks.Add(new Landmark
+{
+    Id = Guid.NewGuid(),
+    Name = "Bastione grosso",
+    Position = new Position { Latitude = 43.85888, Longitude = 7.85194 }
+});
 
-//await db.SaveChangesAsync();
+await sampleDbContext.SaveChangesAsync();
 
-var landmarks = await db.Landmarks.Where(l => l.Position.Latitude > 42).ToListAsync();
+var landmarks = await sampleDbContext.Landmarks.Where(l => l.Position.Latitude > 42).ToListAsync();
 
 Console.ReadLine();
 
