@@ -24,7 +24,7 @@ var invoices = await minimalDbContext.Invoices.Where(i => ids.Contains(i.Id)).To
 // 2. Query for unmapped types.
 var city = "Taggia";
 var people = await minimalDbContext.Database.SqlQuery<Person>($"""
-    SELECT c.Id, FirstName + ' ' + LastName AS Name, c.Name AS CityName
+    SELECT p.Id, FirstName + ' ' + LastName AS Name, c.Name AS CityName
     FROM People p
     INNER JOIN Cities c
     ON p.CityId = c.Id
