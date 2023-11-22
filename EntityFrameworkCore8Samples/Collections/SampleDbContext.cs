@@ -32,6 +32,6 @@ public partial class SampleDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=SampleDB");
-        optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
+        optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuted]);
     }
 }

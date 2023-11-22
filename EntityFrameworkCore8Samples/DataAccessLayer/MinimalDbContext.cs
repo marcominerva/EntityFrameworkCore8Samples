@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using EntityFrameworkCore8Samples.DataAccessLayer.Entities;
+﻿using EntityFrameworkCore8Samples.DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EntityFrameworkCore8Samples.DataAccessLayer;
 
@@ -19,9 +18,10 @@ public partial class MinimalDbContext : DbContext
     public virtual DbSet<Invoice> Invoices { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MinimalDB");
-
+    {
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MinimalDB");
+        optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuted]);
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>(entity =>
