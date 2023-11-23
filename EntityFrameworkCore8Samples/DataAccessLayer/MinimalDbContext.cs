@@ -22,6 +22,7 @@ public partial class MinimalDbContext : DbContext
         optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MinimalDB");
         optionsBuilder.LogTo(Console.WriteLine, [RelationalEventId.CommandExecuted]);
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>(entity =>
